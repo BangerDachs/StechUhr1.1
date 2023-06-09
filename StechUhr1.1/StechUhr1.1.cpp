@@ -11,12 +11,12 @@
 #include <ctime>
 #include <iomanip>
 
-
 using namespace std;
+// Kommentare bleiben erstmal drin f√ºr die √ºberschaubarkeit
+// code wird im laufe des Prozesses verbessert/optimiert
+// 
 
-
-
-// Teilen von  Strings
+// Teilen eines Strings anhand eines Trennzeichens
 vector<string> split(const string& s, char delimiter) {
     vector<string> tokens;
     string token;
@@ -34,7 +34,7 @@ bool checkCSV(const string& filename) {
         return true;
     }
 
-    // Wenn datei nicht existiert, wird sie erstellt
+    // Datei wird erstellt wenn sie nicht existiert
     ofstream out_file(filename);
     if (!out_file) {
         cout << "Fehler beim Erstellen der Datei." << endl;
@@ -45,7 +45,7 @@ bool checkCSV(const string& filename) {
     return true;
 }
 
-// ‹berpr¸fen, ob ein Wert in einer CSV-Datei vorhanden ist
+// √úberpr√ºfen, ob ein Wert in einer CSV-Datei vorhanden ist
 bool isValueInCSV(const string& filename, const string& value) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -65,8 +65,6 @@ bool isValueInCSV(const string& filename, const string& value) {
     return false;
 }
 
-
-
 // Hier wird Uhrzeit und Datum erstellt
 string getCurrentDateTime() {
     auto now = chrono::system_clock::now();
@@ -80,11 +78,11 @@ string getCurrentDateTime() {
     return string(buffer);
 }
 
-// Hinzuf¸gen eines Werts CSV-Datei
+// Hinzuf√ºgen eines Werts CSV-Datei
 void addToCSV(const string& filename, const string& value) {
     ofstream file(filename, ios::app);
     if (!file.is_open()) {
-        cout << "Fehler beim ÷ffnen der Datei." << endl;
+        cout << "Fehler beim √ñffnen der Datei." << endl;
         return;
     }
 
@@ -92,11 +90,11 @@ void addToCSV(const string& filename, const string& value) {
     file.close();
 }
 
-// lˆschen eines Werts CSV-Datei
+// l√∂schen eines Werts CSV-Datei
 void removeToCSV(const string& filename, const string& value) {
     ofstream file(filename, ios::app);
     if (!file.is_open()) {
-        cout << "Fehler beim ÷ffnen der Datei." << endl;
+        cout << "Fehler beim √ñffnen der Datei." << endl;
         return;
     }
 
@@ -104,14 +102,12 @@ void removeToCSV(const string& filename, const string& value) {
     file.close();
 }
 
-
-
 void removeValueFromCSV(const string& filename, const string& value) {
     ifstream file(filename);
     ofstream temp("temp.csv");
 
     if (!file.is_open() || !temp.is_open()) {
-        cout << "Fehler beim ÷ffnen der Datei." << endl;
+        cout << "Fehler beim √ñffnen der Datei." << endl;
         return;
     }
 
@@ -152,11 +148,11 @@ void capitalizeFirstLetter(string& str) {
     }
 }
 
-// R¸ckgabe des letzten Werts einer CSV-Datei
+// R√ºckgabe des letzten Werts einer CSV-Datei
 string getLastValueFromCSV(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) {
-        cout << "Fehler beim ÷ffnen der Datei." << endl;
+        cout << "Fehler beim √ñffnen der Datei." << endl;
         return "";
     }
 
@@ -191,7 +187,7 @@ int daysDifference(const string& date1, const string& date2) {
 void displayLast30Days(const string& filename, const string& value) {
     ifstream file(filename);
     if (!file.is_open()) {
-        cout << "Fehler beim ÷ffnen der Datei." << endl;
+        cout << "Fehler beim √ñffnen der Datei." << endl;
         return;
     }
 
@@ -203,7 +199,7 @@ void displayLast30Days(const string& filename, const string& value) {
         size_t pos = line.find(",");
         string date = line.substr(pos + 2, 10);
         if (daysDifference(date, today) <= 30) {
-            cout << line << endl; 
+            cout << line << endl;
             string folder = "arbeitszeit/";
             string arbeitszeit = folder + value + ".csv";
             addToCSV(arbeitszeit, line);
@@ -212,37 +208,29 @@ void displayLast30Days(const string& filename, const string& value) {
     file.close();
 }
 
-
-
 int main() {
     string folder = "mitarbeiter/";
     string mitarbeiterliste = folder + "mitarbeiterliste.csv";
     string status;
-    
+    vector<string> names;
+
     do {
         cout << "Gib deinen Vor und Nachnamen ein: ";
         string userInput;
-        vector<string> names;
         getline(cin, userInput);
         transformLower(userInput);
-
-        names = split(userInput, ' ');
-        if (names.size() != 2) {
-            cout << "Bitte geben sie Ihren Vor- und Nachnamen ein." << endl;
-        }
-        else{
 
         // Gibt es die CSV datei ?
         bool exists = checkCSV(mitarbeiterliste);
 
-        // ‹berpr¸fen, ob der Wert in der CSV-Datei vorhanden ist
+        // √úberpr√ºfen, ob der Wert in der CSV-Datei vorhanden ist
         if (exists && isValueInCSV(mitarbeiterliste, userInput)) {
             string userFile = folder + userInput + ".csv";
             checkCSV(userFile);
             string lastStatus = getLastValueFromCSV(userFile);
 
             if (lastStatus == "anwesend") {
-                cout << "Was mˆchtest du machen? abmelden | letzten 30 Tage anschauen und speichern: abmelden = 1 | 30 Tage = 2 | EXIT = 0 " << endl;
+                cout << "Was m√∂chtest du machen? abmelden | letzten 30 Tage anschauen: abmelden = 1 | 30 Tage = 2 | EXIT = 0 " << endl;
                 getline(cin, status);
                 if (status == "1") {
                     addToCSV(userFile, "abwesend, " + getCurrentDateTime());
@@ -256,21 +244,24 @@ int main() {
                 else { break; }
             }
             else {
-                cout << "Mˆchtest du dich anmelden ? ja/nein: " << endl;
+                cout << "M√∂chtest du dich anmelden ? ja/nein: " << endl;
                 getline(cin, status);
                 if (status == "ja") {
                     addToCSV(userFile, "anwesend, " + getCurrentDateTime());
                     cout << "Du bist jetzt anwesend: " << getCurrentDateTime() << endl;
-                    
-                    cout << "Mˆchtest du dir die letzten 30 Tage anschauen und speichern? ja/nein: ";
-                    getline(cin, status);
-                    if (status == "ja") {
+
+                    cout << "M√∂chtest du dir die letzten 30 Tage anschauen? ja/nein: ";
+                    string display;
+                    getline(cin, display);
+                    if (display == "ja") {
                         string userFile = folder + userInput + ".csv";
                         displayLast30Days(userFile,userInput);
+                        
                         break;
                     }
-                    else { 
-                        break; }
+                    else {
+                        break;
+                    }
                 }
             }
         }
@@ -283,7 +274,6 @@ int main() {
                 checkCSV(userFile);
                 cout << "Mitarbeiter wurde erfolgreich registriert!" << endl;
             }
-        }
         }
 
     } while (status != "nein");
