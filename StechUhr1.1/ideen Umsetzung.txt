@@ -1,5 +1,0 @@
-funktion die die letzten 30 arbeitstage ausgibt # fertig
-
-die tägliche arbeitszeit von anwesend bis abwesend berechnet 
-
-letzten 30 tage + tägliche arbeitszeit als datei speichert
